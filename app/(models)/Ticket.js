@@ -13,7 +13,7 @@ const ticketSchema = new Schema({
     active: Boolean
 },
     {
-        timeStamps: true,
+        timestamps: true,
     }
 );
 const Ticket = mongoose.models.Ticket || mongoose.model("Ticket", ticketSchema);
