@@ -1,25 +1,37 @@
+"use client";
+
+import React, { useState, useEffect } from "react";
 import TicketCard from "./(components)/TicketCard";
+import { getTickets } from "./utils/api";
 
-const getTickets = async () => {
-  try {
-    const res = await fetch("http://localhost:3000/api/Tickets", {
-      cache: "no-store",
-    });
-    if (!res.ok) {
-      throw new Error(
-        `Failed to fetch tickets: ${res.status} ${res.statusText}`
-      );
-    }
-    const ticketsData = await res.json();
-    return ticketsData;
-  } catch (e) {
-    console.log("Failed to get tickets", e);
-    throw e;
+const Dashboard = () => {
+  const [tickets, setTickets] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchTickets = async () => {
+      try {
+        const { tickets } = await getTickets();
+        setTickets(tickets);
+        setLoading(false);
+      } catch (error) {
+        console.error("Failed to fetch tickets:", error);
+        setError("Failed to fetch tickets. Please try again later.");
+        setLoading(false);
+      }
+    };
+
+    fetchTickets();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
   }
-};
 
-const Dashboard = async () => {
-  const { tickets } = await getTickets();
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   const uniqueCategories = [
     ...new Set(tickets?.map(({ category }) => category)),
