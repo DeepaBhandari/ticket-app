@@ -1,8 +1,7 @@
-
 export const getTickets = async () => {
     try {
-        // const res = await fetch("http://localhost:3000/api/Tickets", {
-        const res = await fetch("../api/Tickets", {
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+        const res = await fetch(`${baseUrl}/api/Tickets`, {
             cache: "no-store",
         });
         if (!res.ok) {
