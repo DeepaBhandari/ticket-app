@@ -5,9 +5,16 @@ const getTickets = async () => {
     const res = await fetch("http://localhost:3000/api/Tickets", {
       cache: "no-store",
     });
-    return res.json();
+    if (!res.ok) {
+      throw new Error(
+        `Failed to fetch tickets: ${res.status} ${res.statusText}`
+      );
+    }
+    const ticketsData = await res.json();
+    return ticketsData;
   } catch (e) {
     console.log("Failed to get tickets", e);
+    throw e;
   }
 };
 
