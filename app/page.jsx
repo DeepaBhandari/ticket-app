@@ -1,37 +1,27 @@
-"use client";
-
-import React, { useState, useEffect } from "react";
 import TicketCard from "./(components)/TicketCard";
-import { getTickets } from "./utils/api";
+import { BASE_API_URL } from "./utils/constants";
 
-const Dashboard = () => {
-  const [tickets, setTickets] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchTickets = async () => {
-      try {
-        const { tickets } = await getTickets();
-        setTickets(tickets);
-        setLoading(false);
-      } catch (error) {
-        console.error("Failed to fetch tickets:", error);
-        setError("Failed to fetch tickets. Please try again later.");
-        setLoading(false);
-      }
-    };
-
-    fetchTickets();
-  }, []);
-
-  if (loading) {
-    return <div>Loading...</div>;
+const getTickets = async () => {
+  // try {
+  const res = await fetch(`${BASE_API_URL}/api/Tickets`, {
+    cache: "no-store",
+  });
+  if (!res.ok) {
+    throw new Error(`Failed to fetch tickets: ${res.status} ${res.statusText}`);
   }
+  const ticketsData = await res.json();
+  return ticketsData;
+  // } catch (e) {
+  //   console.log("Failed to get tickets", e);
+  //   throw e;
+  // }
+};
 
-  if (error) {
-    return <div>Error: {error}</div>;
+const Dashboard = async () => {
+  if (!BASE_API_URL) {
+    return null;
   }
+  const { tickets } = await getTickets();
 
   const uniqueCategories = [
     ...new Set(tickets?.map(({ category }) => category)),

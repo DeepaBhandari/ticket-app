@@ -1,8 +1,8 @@
 import TicketForm from "@/app/(components)/TicketForm";
+import { BASE_API_URL } from "@/app/utils/constants";
 
 const getTicketById = async (id) => {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-  const res = await fetch(`${baseUrl}/api/Tickets/${id}`, {
+  const res = await fetch(`${BASE_API_URL}/api/Tickets/${id}`, {
     cache: "no-store",
   });
   if (!res.ok) {
@@ -15,6 +15,9 @@ const TicketPage = async ({ params }) => {
   const EDITMODE = params.id === "new" ? false : true;
   let updateTicketData = {};
   if (EDITMODE) {
+    if (!BASE_API_URL) {
+      return null;
+    }
     updateTicketData = await getTicketById(params.id);
     updateTicketData = updateTicketData.foundTicket;
   } else {
